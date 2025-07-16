@@ -10,7 +10,8 @@ import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 
 //demo
-// const createUserFunction =async (req : Request, res : Response, next : NextFunction) => {
+// const createUserFunction =async (req : Request, res : Response, next : NextFunction) 
+// => {
 //             const user = await UserServices.createUser(req.body)
 //          res.status(201).json({
 //             message : "user create successfuly",
@@ -44,18 +45,18 @@ const createUser = catchAsync(
   }
 );
 
-// try {
-//     // throw new AppError(201,"create eror");
-//     const user = await UserServices.createUser(req.body)
-//      res.status(201).json({
-//         message : "user create successfuly",
-//         user
-//     })
-
-// } catch (err : any) {
-//   next(err)
-
-// }
+// type AsyncHandler = (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => Promise<void>;
+// export const catchAsync =
+//   (fn: AsyncHandler) => (req: Request, res: Response, next: NextFunction) => {
+//     Promise.resolve(fn(req, res, next)).catch((err: any) => {
+//       console.log(err);
+//       next(err);
+//     });
+//   };
 const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
    //  const token = req.headers.authorization

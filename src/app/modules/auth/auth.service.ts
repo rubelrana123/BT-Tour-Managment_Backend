@@ -28,6 +28,7 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
     // const accessToken = jwt.sign(jwtPayload, "secret",{
     //     expiresIn : "1d"
     // })
+    console.log("accesstoke after generate", accessToken)
     return {
         accessToken
         // email : isUserExist.email
