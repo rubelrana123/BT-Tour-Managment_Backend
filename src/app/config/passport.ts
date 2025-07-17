@@ -1,11 +1,61 @@
-import passport, { Profile } from "passport";
+import passport from "passport";
 import {
   Strategy as GoogleStrategy,
+  Profile,
   VerifyCallback,
 } from "passport-google-oauth20";
 import { envVars } from "./env";
 import { User } from "../modules/user/user.model";
 import { Role } from "../modules/user/user.interface";
+import { Strategy as LocalStrategy } from "passport-local";
+import bcryptjs from "bcryptjs";
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    async (email: string, password: string, done) => {
+      try {
+        let isUserExist = await User.findOne({ email });
+        // if (!isUserExist) {
+        //   return done(null, false, { message: "  user does notexits" });
+        // }
+        if (!isUserExist) {
+          return done("user does not exits" );
+        }
+
+        const isGoogleAuthenticated = isUserExist.auths.some(
+          (providerObjects) => providerObjects.provider == "google"
+        );
+        if (isGoogleAuthenticated && !isUserExist.password) {
+            return done(null, false, { message: "You have authenticated through Google. So if you want to login with credentials, then at first login with google and set a password for your Gmail and then you can login with email and password." })
+        }
+
+        // if (isGoogleAuthenticated) {
+        //   return done(
+        //     "You have authenticated through Google. So if you want to login with credentials, then at first login with google and set a password for your Gmail and then you can login with email and password."
+        //   );
+        // }
+
+        const isPasswordMatched = await bcryptjs.compare(
+          password as string,
+          isUserExist.password as string
+        );
+
+        if (!isPasswordMatched) {
+          return done(null, false, { message: "Incorrect Password" });
+        }
+
+        return done(null, isUserExist);
+      } catch (error) {
+        console.log(error);
+        done(error);
+      }
+    }
+  )
+);
 
 passport.use(
   new GoogleStrategy(
@@ -22,10 +72,13 @@ passport.use(
     ) => {
       try {
         const email = profile.emails?.[0].value;
+
         if (!email) {
-          return done(null, false, { message: "no email found" });
+          return done(null, false, { mesaage: "No email found" });
         }
+
         let user = await User.findOne({ email });
+
         if (!user) {
           user = await User.create({
             email,
@@ -40,29 +93,33 @@ passport.use(
               },
             ],
           });
-          return done(null, user, { message: "user login successfully" });
         }
+
+        return done(null, user);
       } catch (error) {
-        console.log("google strategy error ", error);
+        console.log("Google Strategy Error", error);
         return done(error);
       }
     }
   )
 );
+
+// frontend localhost:5173/login?redirect=/booking -> localhost:5000/api/v1/auth/google?redirect=/booking -> passport -> Google OAuth Consent -> gmail login -> successful -> callback url localhost:5000/api/v1/auth/google/callback -> db store -> token
+
+// Bridge == Google -> user db store -> token
+//Custom -> email , password, role : USER, name... -> registration -> DB -> 1 User create
+//Google -> req -> google -> successful : Jwt Token : Role , email -> DB - Store -> token - api access
+
 passport.serializeUser((user: any, done: (err: any, id?: unknown) => void) => {
   done(null, user._id);
 });
+
 passport.deserializeUser(async (id: string, done: any) => {
   try {
-    let user = await User.findById(id);
+    const user = await User.findById(id);
     done(null, user);
   } catch (error) {
     console.log(error);
     done(error);
   }
 });
-// frontend localhost:5173/login?redirect=/booking -> localhost:5000/api/v1/auth/google?redirect=/booking -> passport -> Google OAuth Consent -> gmail login -> successful -> callback url localhost:5000/api/v1/auth/google/callback -> db store -> token
-
-// Bridge == Google -> user db store -> token
-//Custom -> email , password, role : USER, name... -> registration -> DB -> 1 User create
-//Google -> req -> google -> successful : Jwt Token : Role , email -> DB - Store -> token - api access
