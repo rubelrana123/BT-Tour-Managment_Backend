@@ -9,7 +9,7 @@ import jwt, { JwtPayload, verify } from "jsonwebtoken";
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
 
-  const isUserExist = await User.findOne({ email });
+  const isUserExist = await User.findOne({ email }); 
 
   if (!isUserExist) {
     throw new AppError(401, "Email does not exist");

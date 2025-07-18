@@ -7,10 +7,43 @@ import { AuthToken, setAuthCookie } from "../../utils/setCookie";
 import { createUserToken } from "../../utils/userToken";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import passport from "passport";
+import app from "../../../app";
  
 
-const credentialsLogin = catchAsync(async(req: Request, res: Response ) => {
- const loginInfo = await AuthServices.credentialsLogin(req.body);
+const credentialsLogin = catchAsync(async(req: Request, res: Response, next : NextFunction ) => {
+    //  const loginInfo = await AuthServices.credentialsLogin(req.body);
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
+        if (err) {
+            return next(err);     
+            // return next(new AppError(401,"authentication errror")) 
+            // return new AppError(401,"authentication errror")
+        }
+        if (!user) {
+            // return next(err);     
+
+            return next(new AppError(401,info.message))
+            
+        }
+
+    const userTokens =   createUserToken(user);
+      const userObject = user.toObject();
+       delete userObject.password;
+      setAuthCookie(res,userTokens)
+        sendResponse(res, {
+        success : true,
+        statusCode : 200,
+        message : "User login successfully",
+        // data : loginInfo,  
+        data : {
+            accessToken : userTokens.accessToken,
+            refreshToken : userTokens.refreshToken,
+            user : userObject
+        }
+    
+
+     })
+    })(req, res,next)
 //    res.cookie("refreshToken", loginInfo.refreshToken, {
 //      httpOnly : true,
 //      secure : false
@@ -19,15 +52,15 @@ const credentialsLogin = catchAsync(async(req: Request, res: Response ) => {
 //      httpOnly : true,
 //      secure : false
 //    })
-     setAuthCookie(res,loginInfo)
-     sendResponse(res, {
-        success : true,
-        statusCode : 200,
-        message : "User login successfully",
-        data : loginInfo,  
+    //  setAuthCookie(res,loginInfo)
+    //  sendResponse(res, {
+    //     success : true,
+    //     statusCode : 200,
+    //     message : "User login successfully",
+    //     data : loginInfo,  
     
 
-     })
+    //  })
 
 });
 const getNewAccessToken = catchAsync(async(req: Request, res: Response ) => {

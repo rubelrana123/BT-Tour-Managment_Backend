@@ -15,7 +15,7 @@ export const createUserToken = (user : Partial<IUser>) => {
         // const accessToken = jwt.sign(jwtPayload, "secret",{
         //     expiresIn : "1d"
         // })
-        const refreshToken = generateToken(jwtPayload, envVars.JWT_REFRESH_SECRET, envVars.JWT_ACCESS_EXPIRES)
+        const refreshToken = generateToken(jwtPayload, envVars.JWT_REFRESH_SECRET, envVars.JWT_REFRESH_EXPIRES)
       
 
          
@@ -60,6 +60,6 @@ export const createNewAccessTokenWithRefreshToken = async (refreshToken : string
 
 }
 
-function async(arg0: string) {
-    throw new Error("Function not implemented.");
-}
+// function async(arg0: string) {
+//     throw new Error("Function not implemented.");
+// }
