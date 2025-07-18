@@ -7,7 +7,7 @@ import { envVars } from "../../config/env";
 const createUser = async(payload : Partial<IUser>) =>{
         const { email,password, ...rest} = payload;
        const isEmailExits = await User.findOne({email});
-       if(isEmailExits )  {throw new AppError(505,"User already exits")};
+    //    if(isEmailExits )  {throw new AppError(505,"User already exits")};
        const hashPassword = await bcryptjs.hash( password as string, 10 );
        const authProvider : IAuthProvider = {provider : "credentials", providerId : email!}
        
