@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { userControllers } from "./user.controller";
 import { createUserZodSchema, updateUserZodSchema } from "./user.validation";
-import { validayeRequest } from "../../middlewares/validateRequest";
+import { validateRequest } from "../../middlewares/validateRequest";
 import AppError from "../../errorHelpers/appError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Role } from "./user.interface";
@@ -9,7 +9,7 @@ import { verifyToken } from "../../utils/jwt";
 import { envVars } from "../../config/env";
 import { checkAuth } from "../../middlewares/checkAuth";
 const router = Router();
-//  export const validayeRequest= (zodSchema  : 
+//  export const validateRequest= (zodSchema  : 
 // AnyZodObject) => async (req : Request, res : Response, next : NextFunction) =>{
 //     try {
 //       req.body = await zodSchema.parseAsync(req.body)
@@ -25,7 +25,7 @@ const router = Router();
 
 router.post(
   "/register",
-  validayeRequest(createUserZodSchema),
+  validateRequest(createUserZodSchema),
   userControllers.createUser
 );
 // export const checkAuth = (...authRoles : string[]) =>   async (req: Request, res: Response, next: NextFunction) => {
@@ -55,6 +55,6 @@ router.get(
   userControllers.getAllUsers
 );
 router.patch("/:id",
-  validayeRequest(updateUserZodSchema),
+  validateRequest(updateUserZodSchema),
   checkAuth(...Object.values(Role)), userControllers.updateUser)
 export const userRoutes = router;
