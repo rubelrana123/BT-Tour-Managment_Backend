@@ -7,7 +7,7 @@ import { sendResponse } from '../../utils/sendResponse';
 
 const createTour = catchAsync(async (req: Request, res: Response) => {
    const payload = req.body;
-   console.log("createtour body", payload)
+   console.log("createtour body", payload);
     const result = await TourService.createTour(payload);
     sendResponse(res, {
         statusCode: 201,
@@ -19,7 +19,7 @@ const createTour = catchAsync(async (req: Request, res: Response) => {
 
 const getAllTours = catchAsync(async (req: Request, res: Response) => {
 
-    const query = req.query
+    const query = req.query;
     const result = await TourService.getAllTours(query as Record<string, string>);
     sendResponse(res, {
         statusCode: 200,
@@ -49,6 +49,16 @@ const deleteTour = catchAsync(async (req: Request, res: Response) => {
         success: true,
         message: 'Tour deleted successfully',
         data: result,
+    });
+});
+const getSingleTour = catchAsync(async (req: Request, res: Response) => {
+    const slug = req.params.slug
+    const result = await TourService.getSingleTour(slug);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Tours retrieved",
+        data: result.data,
     });
 });
 const getAllTourTypes = catchAsync(async (req: Request, res: Response) => {
@@ -104,4 +114,5 @@ export const TourController = {
     getAllTours,
     updateTour,
     deleteTour,
+    getSingleTour
 };
