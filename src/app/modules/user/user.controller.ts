@@ -74,7 +74,8 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     })
 })
 const getAllUsers = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
-     const result = await UserServices.getAllUsers();
+   const query = req.query;  
+   const result = await UserServices.getAllUsers(query as Record<string, string>);
      sendResponse(res, {
         success : true,
         statusCode : 200,
