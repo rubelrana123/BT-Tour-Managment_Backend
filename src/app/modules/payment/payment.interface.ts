@@ -3,11 +3,13 @@
 // payment status change - paid 
 
 import { Types } from "mongoose";
-export enum  PAYMENT_STATUS {
+
+export enum PAYMENT_STATUS {
     PAID = "PAID",
     UNPAID = "UNPAID",
     CANCELLED = "CANCELLED",
-    REFUNDED= "REFUNDED"
+    FAILED = "FAILED",
+    REFUNDED = "REFUNDED"
 }
 export interface IPAYMENT {
     booking : Types.ObjectId,
