@@ -3,11 +3,15 @@ import { Request, Response } from 'express';
 import { catchAsync } from '../../utils/catchAsync';
 import { TourService } from './tour.service';
 import { sendResponse } from '../../utils/sendResponse';
+import { ITour } from './tour.interface';
  
 
 const createTour = catchAsync(async (req: Request, res: Response) => {
-   const payload = req.body;
-   console.log("createtour body", payload);
+    const payload: ITour = {
+        ...req.body,
+        images: (req.files as Express.Multer.File[]).map(file => file.path)
+    }
+   console.log("createtour body", payload , req.body);
     const result = await TourService.createTour(payload);
     sendResponse(res, {
         statusCode: 201,
