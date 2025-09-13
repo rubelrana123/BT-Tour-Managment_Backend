@@ -6,8 +6,9 @@ import { handlerDuplicateError } from "../helpers/handleDuplicateError";
 import { handlerZodError } from "../helpers/handleZodError";
 import { handleCastError } from "../helpers/handleCastError";
 import { handlerValidationError } from "../helpers/handleValidationError";
+import { deleteImageFromCloudinary } from "../config/cloudinary.config";
 
-export const globalErrorHandler = (
+export const globalErrorHandler = async(
   err: any,
   req: Request,
   res: Response,
@@ -17,12 +18,21 @@ export const globalErrorHandler = (
     console.log("error from golbal", err);
   }
 
+
   /* 
   mongoose ==> caseError, duplicate error, validation error 
   */
   let statusCode = 500;
   let message = `something went wrong !!`;
   let errorSources: any = [];
+   
+    if (req.file) {
+        await deleteImageFromCloudinary(req.file.path)
+    }
+    if (req.files && (req.files as Express.Multer.File[]).length > 0) {
+       const imageUrls = (req.files as Express.Multer.File[]).map(file => file.path)
+       await Promise.all(imageUrls.map(url =>   deleteImageFromCloudinary(url)))
+    }
 
   if (err.code === 11000) {
     const simplifiedError = handlerDuplicateError(err);

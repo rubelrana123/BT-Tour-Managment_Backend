@@ -11,6 +11,7 @@ const createTour = async (payload: Partial<ITour>) => {
   if (existingTour) {
     throw new Error("A tour with this title already exists.");
   }
+  // throw new Error("A tour with this title already exists.");
   // if(payload.title) {
   //   const baseSlug = payload.title.trim().toLowerCase().replace(/\s+/g, '-');
   //   let slug = `${baseSlug}-division`;
@@ -22,6 +23,52 @@ const createTour = async (payload: Partial<ITour>) => {
   //   payload.slug = slug;
 
   // }
+
+  /* 
+  {
+  "_id": {
+    "$oid": "6881d8206ac6575973421076"
+  },
+  "title": "Explore the Beauty of Singra Forest",
+  "description": "Experience the world's longest natural sandy sea beach.",
+  "images": [
+    "singra-forest-1.jpg",
+    "singra-forest-2.jpg"
+  ],
+  "location": "Singra Forest",
+  "costFrom": 18700,
+  "departureLocation": "Dhaka",
+  "arrivalLocation": "Singra Forest",
+  "included": [
+    "Transportation",
+    "Meals",
+    "3-star Accommodation",
+    "English Guide"
+  ],
+  "excluded": [
+    "Personal Expenses",
+    "Tips",
+    "Travel Insurance"
+  ],
+  "amenities": [
+    "Free WiFi",
+    "AC Transport",
+    "First Aid Kit",
+    "Welcome Drink"
+  ],
+  "tourPlan": [
+    "Day 1: Arrival & Beach Walk",
+    "Day 2: Himchori Waterfall Visit",
+    "Day 3: Marine Drive Tour",
+    "Day 4: Free Day",
+    "Day 5: Return"
+  ],
+  "maxGuest": 14,
+  "minAge": 10,
+  "division": "6880b91b2889daaf85b74abb",
+  "tourType": "6880b9fe2889daaf85b74acb" 
+}
+  */
   const tour = await Tour.create(payload);
 
   return tour;
